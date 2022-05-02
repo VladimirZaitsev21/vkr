@@ -33,67 +33,32 @@ public class PathCalculator {
         this.ecoEncoder = ecoEncoder;
     }
 
-    public RouteDTO getSightsPath(double fromLat, double fromLng, double toLat, double toLng, double ecoFactor) {
-        RequestParams.getInstance().setEcoFactor(ecoFactor);
-        GHRequest request = new GHRequest(fromLat, fromLng, toLat, toLng)
-                .setAlgorithm(
-                        new AlgorithmOptions(
-                                Parameters.Algorithms.ASTAR.toString(),
-                                new FastestWeighting(
-                                        sightsEncoder
-                                )
-                        ).getAlgorithm()
-                )
-                .setProfile("my_foot");
-        GHResponse response = sightsHopper.route(request);
-        ResponsePath responsePath = response.getBest();
-        int pointListSize = responsePath.getPoints().getSize();
-        double[][] points = new double[pointListSize][2];
-        for (int i = 0; i < pointListSize; i++) {
-            points[i][0] = responsePath.getPoints().getLat(i);
-            points[i][1] = responsePath.getPoints().getLon(i);
-        }
-        RouteDTO routeDTO = new RouteDTO(points, responsePath.getDistance(), responsePath.getTime());
-        return routeDTO;
+    public RouteDTO getStandardPath(double fromLat, double fromLng, double toLat, double toLng) {
+        return buildRoute(fromLat, fromLng, toLat, toLng, standardEncoder, standardHopper);
     }
 
-
-    public RouteDTO getStandardPath(double fromLat, double fromLng, double toLat, double toLng) {
-        GHRequest request = new GHRequest(fromLat, fromLng, toLat, toLng)
-                .setAlgorithm(
-                        new AlgorithmOptions(
-                                Parameters.Algorithms.ASTAR.toString(),
-                                new FastestWeighting(
-                                        standardEncoder
-                                )
-                        ).getAlgorithm()
-                )
-                .setProfile("my_foot");
-        GHResponse response = standardHopper.route(request);
-        ResponsePath responsePath = response.getBest();
-        int pointListSize = responsePath.getPoints().getSize();
-        double[][] points = new double[pointListSize][2];
-        for (int i = 0; i < pointListSize; i++) {
-            points[i][0] = responsePath.getPoints().getLat(i);
-            points[i][1] = responsePath.getPoints().getLon(i);
-        }
-        RouteDTO routeDTO = new RouteDTO(points, responsePath.getDistance(), responsePath.getTime());
-        return routeDTO;
+    public RouteDTO getSightsPath(double fromLat, double fromLng, double toLat, double toLng, double ecoFactor) {
+        RequestParams.getInstance().setEcoFactor(ecoFactor);
+        return buildRoute(fromLat, fromLng, toLat, toLng, sightsEncoder, sightsHopper);
     }
 
     public RouteDTO getEcoPath(double fromLat, double fromLng, double toLat, double toLng, double ecoFactor) {
         RequestParams.getInstance().setEcoFactor(ecoFactor);
+        return buildRoute(fromLat, fromLng, toLat, toLng, ecoEncoder, ecoHopper);
+    }
+
+    private RouteDTO buildRoute(double fromLat, double fromLng, double toLat, double toLng, FlagEncoder encoder, GraphHopper hopper) {
         GHRequest request = new GHRequest(fromLat, fromLng, toLat, toLng)
                 .setAlgorithm(
                         new AlgorithmOptions(
-                                Parameters.Algorithms.ASTAR.toString(),
+                                Parameters.Algorithms.ASTAR,
                                 new FastestWeighting(
-                                        ecoEncoder
+                                        encoder
                                 )
                         ).getAlgorithm()
                 )
                 .setProfile("my_foot");
-        GHResponse response = ecoHopper.route(request);
+        GHResponse response = hopper.route(request);
         ResponsePath responsePath = response.getBest();
         int pointListSize = responsePath.getPoints().getSize();
         double[][] points = new double[pointListSize][2];
