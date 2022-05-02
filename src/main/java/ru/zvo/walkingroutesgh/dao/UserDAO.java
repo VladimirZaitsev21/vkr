@@ -10,19 +10,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Provides the ability to manipulate sigths in the repository (database)
+ *
+ * @author Vladimir Zaitsev
+ */
 @Repository
 public class UserDAO {
 
+    /**
+     * Connection to the database
+     */
     private Connection connection;
 
+    /**
+     * No-args constructor
+     */
     public UserDAO() {
         connection = SpringContext.getBean(Connection.class);
     }
 
-    public void createNewUser(String login, Role role) {
-
-    }
-
+    /**
+     * Stores a user that does not exist in the database
+     *
+     * @param user user to save
+     */
     public void saveNewUser(User user) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "INSERT INTO public.users (login, \"password\", blocked, role_id, online) VALUES (?, ?, ?, (SELECT role_id FROM roles WHERE role_name = ? LIMIT 1), ?);")) {
@@ -37,6 +49,11 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Stores a user that exists in the database
+     *
+     * @param user user to save
+     */
     public void saveExistingUser(User user) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "update users set login = ?, password = ?, role_id = (SELECT role_id FROM roles WHERE role_name = ? LIMIT 1), blocked = ?, online = ? where user_id = ?;")) {
@@ -52,18 +69,11 @@ public class UserDAO {
         }
     }
 
-    public List<User> getAllOnline() {
-        return null;
-    }
-
-    public List<User> getAllBlocked() {
-        return null;
-    }
-
-    public Role getRole(String login) {
-        return null;
-    }
-
+    /**
+     * Deletes specified user from database
+     *
+     * @param id id of the user to be deleted
+     */
     public void deleteUser(long id) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("delete from users where user_id = ?")) {
             preparedStatement.setLong(1, id);
@@ -73,6 +83,12 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Sets user's status in the database
+     *
+     * @param login user login
+     * @param isBlocked new status
+     */
     public void setUserBlocked(String login, boolean isBlocked) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("update users set blocked = ? where login = ?;")) {
             preparedStatement.setBoolean(1, isBlocked);
@@ -83,6 +99,11 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Returns all existing in the database users
+     *
+     * @return all existing in the database users
+     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
@@ -103,6 +124,12 @@ public class UserDAO {
         return users;
     }
 
+    /**
+     * Returns user with specified login
+     *
+     * @param login login to search by
+     * @return user with specified login
+     */
     public User getUserByLogin(String login) {
         User user = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -126,6 +153,12 @@ public class UserDAO {
         return user;
     }
 
+    /**
+     * Returns user with specified id
+     *
+     * @param userId id to search by
+     * @return user with specified id
+     */
     public User getUserById(Long userId) {
         User user = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(

@@ -15,26 +15,26 @@ import java.util.List;
 
 import static com.graphhopper.routing.util.EncodingManager.getKey;
 
-public class CustomWeighting extends FastestWeighting {
+public class SightWeighting extends FastestWeighting {
 
     private double superWeight;
     private List<Double> weights = new ArrayList<>();
 
-    public CustomWeighting(FlagEncoder encoder) {
+    public SightWeighting(FlagEncoder encoder) {
         super(encoder);
     }
 
-    public CustomWeighting(FlagEncoder encoder, TurnCostProvider turnCostProvider) {
+    public SightWeighting(FlagEncoder encoder, TurnCostProvider turnCostProvider) {
         super(encoder, turnCostProvider);
     }
 
-    public CustomWeighting(FlagEncoder encoder, PMap map) {
+    public SightWeighting(FlagEncoder encoder, PMap map) {
         super(encoder, map);
         System.out.println(super.getFlagEncoder().toString());
         RequestParams.getInstance().setWeights(weights);
     }
 
-    public CustomWeighting(FlagEncoder encoder, PMap map, TurnCostProvider turnCostProvider) {
+    public SightWeighting(FlagEncoder encoder, PMap map, TurnCostProvider turnCostProvider) {
         super(encoder, map, turnCostProvider);
     }
 

@@ -26,8 +26,9 @@ public class DeleteEditCommand implements Command {
         String url = null;
         if (((User) req.getSession().getAttribute("user")).getRole().equals(Role.HISTORIAN)) {
             req.getSession().setAttribute("edits", editsDAO.getUserEdits((User) req.getSession().getAttribute("user")));
-            url = "/my-edits";
-            new MyEditsCommand().execute(req, resp);
+//            url = "/my-edits";
+//            new MyEditsCommand().execute(req, resp);
+            resp.sendRedirect(req.getContextPath() + "/frontController?command=my_edits");
         }
         if (((User) req.getSession().getAttribute("user")).getRole().equals(Role.MODERATOR)) {
 //            url = "/historian-edits";

@@ -13,14 +13,16 @@ import static com.graphhopper.routing.util.EncodingManager.getKey;
 
 import java.util.List;
 
-public class Encoder extends FootFlagEncoder {
+public class SightEncoder extends FootFlagEncoder {
 
     private DecimalEncodedValue sightsEncodedValue;
+//    private DecimalEncodedValue ecoEncodedValue;
 
     @Override
     public void createEncodedValues(List<EncodedValue> registerNewEncodedValue, String prefix, int index) {
         super.createEncodedValues(registerNewEncodedValue, prefix, index);
         registerNewEncodedValue.add(sightsEncodedValue = new UnsignedDecimalEncodedValue(getKey(prefix, "sights_priority"), 10, 0.1, false));
+//        registerNewEncodedValue.add(ecoEncodedValue = new UnsignedDecimalEncodedValue(getKey(prefix, "eco_priority"), 10, 0.1, false));
     }
 
 
@@ -33,13 +35,18 @@ public class Encoder extends FootFlagEncoder {
     public IntsRef handleWayTags(IntsRef edgeFlags, ReaderWay way, EncodingManager.Access access) {
         IntsRef flags = super.handleWayTags(edgeFlags, way, access);
         sightsEncodedValue.setDecimal(false, flags, Double.parseDouble(way.getTag("sight_param")));
+//        ecoEncodedValue.setDecimal(false, flags, Double.parseDouble(way.getTag("eco_param")));
         return flags;
     }
 
     @Override
     public void applyWayTags(ReaderWay way, EdgeIteratorState edge) {
         String sight_param = way.getTag("sight_param");
+//        String eco_param = way.getTag("eco_param");
+
         edge.set(sightsEncodedValue, Double.parseDouble(sight_param));
+//        edge.set(ecoEncodedValue, Double.parseDouble(eco_param));
+
         super.applyWayTags(way, edge);
     }
 

@@ -9,22 +9,60 @@ import org.postgis.Polygon;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * Describes an sight that may interest a pedestrian
+ *
+ * @author Vladimir Zaitsev
+ */
 public class Sight {
 
+    /**
+     * Type in OSM notation
+     *
+     * @see OsmType
+     */
     private OsmType osmType;
 
+    /**
+     * id of this sight
+     */
     private long osmId;
 
+    /**
+     * The name of the sight
+     */
     private String name;
 
+    /**
+     * Points that make up the sight
+     */
     private double[][] points;
 
+    /**
+     * Tags provided by OSM
+     */
     private Map<String, String> tags;
 
+    /**
+     * The description of the sight
+     */
     private String description;
 
+    /**
+     * The influence that sight have on the weight of the edge of the navigation graph
+     */
     private double impact;
 
+    /**
+     * Sight constructor with parameters
+     * @param osmType Type in OSM notation
+     * @param osmId id of this sight
+     * @param geometry Geometric representation of the sight
+     * @param name The name of the sight
+     * @param tags Tags provided by OSM
+     * @param description The description of the sight
+     * @param impact The influence that sight have on the weight of the edge of the navigation graph
+     */
     public Sight(OsmType osmType, long osmId, PGgeometry geometry, String name, Map<String, String> tags, String description, double impact) {
         this.osmType = osmType;
         this.osmId = osmId;

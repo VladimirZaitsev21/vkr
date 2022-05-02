@@ -1,6 +1,5 @@
 package ru.zvo.walkingroutesgh.dao;
 
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.stereotype.Repository;
 import ru.zvo.walkingroutesgh.config.SpringContext;
 import ru.zvo.walkingroutesgh.dto.Edit;
@@ -11,19 +10,46 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides the ability to manipulate edits in the repository (database)
+ *
+ * @author Vladimir Zaitsev
+ */
 @Repository
 public class EditsDAO {
 
+    /**
+     * Connection to the database
+     */
     private Connection connection;
+
+    /**
+     * Class which provides the ability to manipulate users in the repository
+     *
+     * @see UserDAO
+     */
     private UserDAO userDAO;
+
+    /**
+     * Class which provides the ability to manipulate sights in the repository
+     *
+     * @see SightsDAO
+     */
     private SightsDAO sightsDAO;
 
+    /**
+     * No-arguments EditsDAO constructor
+     */
     public EditsDAO() {
         userDAO = SpringContext.getBean(UserDAO.class);
         sightsDAO = SpringContext.getBean(SightsDAO.class);
         connection = SpringContext.getBean(Connection.class);
     }
 
+    /**
+     * Saves provided edit in the database
+     * @param edit edit to save
+     */
     public void save(Edit edit) {
         if (getEditById(edit.getId()) != null) {
             System.out.println("getEditById(edit.getId()) != null");
@@ -55,6 +81,12 @@ public class EditsDAO {
         }
     }
 
+    /**
+     * Returns the edit found by id
+     *
+     * @param id id to search by
+     * @return edit found by id
+     */
     public Edit getEditById(long id) {
         Edit edit = null;
         try(PreparedStatement preparedStatement = connection.prepareStatement(
@@ -72,6 +104,12 @@ public class EditsDAO {
         return edit;
     }
 
+    /**
+     * Returns edits made by the specified user
+     *
+     * @param user user whose edits are need to be received
+     * @return edits made by the specified user
+     */
     public List<Edit> getUserEdits(User user) {
         List<Edit> edits = new ArrayList<>();
         try(PreparedStatement preparedStatement = connection.prepareStatement(
@@ -88,6 +126,11 @@ public class EditsDAO {
         return edits;
     }
 
+    /**
+     * Deletes edit with specified id
+     *
+     * @param id id of the edit that should be deleted
+     */
     public void deleteEdit(long id) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("delete from edits where edit_id = ?;")) {
             preparedStatement.setLong(1, id);
@@ -97,6 +140,11 @@ public class EditsDAO {
         }
     }
 
+    /**
+     * Returns all edits stored in database
+     *
+     * @return all edits stored in database
+     */
     public List<Edit> getAllEdits() {
         List<Edit> edits = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {

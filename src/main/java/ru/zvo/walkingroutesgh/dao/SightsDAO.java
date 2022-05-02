@@ -16,11 +16,22 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Provides the ability to manipulate sights in the repository (database)
+ *
+ * @author Vladimir Zaitsev
+ */
 @Repository
 public class SightsDAO {
 
+    /**
+     * Connection to the database
+     */
     private Connection connection;
 
+    /**
+     * No-args constructor
+     */
     public SightsDAO() {
         connection = SpringContext.getBean(Connection.class);
         try {
@@ -31,6 +42,11 @@ public class SightsDAO {
         }
     }
 
+    /**
+     * Returns all sights stored in database
+     *
+     * @return all sights stored in database
+     */
     public List<Sight> getAllSights() {
         List<Sight> sights = new ArrayList<>();
         try (Statement s = connection.createStatement();
@@ -53,6 +69,11 @@ public class SightsDAO {
         return sights;
     }
 
+    /**
+     * Stores specified sight into the database
+     *
+     * @param sightToSave sight that should be saved
+     */
     public void saveSight(Sight sightToSave) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("update sights set name = ?, description = ? where osm_id = ?;")) {
             preparedStatement.setString(1, sightToSave.getName());
@@ -64,6 +85,12 @@ public class SightsDAO {
         }
     }
 
+    /**
+     * Returns the sight found by specified id
+     *
+     * @param id id to search by
+     * @return sight found by id
+     */
     public Sight getSightById(long id) {
         Sight sight = null;
         try (PreparedStatement s = connection.prepareStatement("select geom, osm_id, osm_type, name, description, impact, tags from sights where osm_id = ?");) {

@@ -9,31 +9,73 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Describes the route on the terrain for the pedestrian
+ *
+ * @author Vladimir Zaitsev
+ */
 public class RouteDTO {
+
+    /**
+     * id of this route
+     */
     private Long id;
 
+    /**
+     * Points that make up the route
+     *
+     * @see Point
+     */
     @JsonIgnore
     private List<Point> points;
-    private double distance;
-    private long time;
-    private int rating;
 
+    /**
+     * Route distance in meters
+     */
+    private double distance;
+
+    /**
+     * Route travel time in milliseconds
+     */
+    private long time;
+
+    /**
+     * Default route constructor
+     */
     public RouteDTO() {
     }
 
-    public RouteDTO(List<Point> points, double distance, long time, int rating) {
+    /**
+     * Route constructor with parameters
+     * @param points Points that make up the route as List
+     * @param distance Route distance in meters
+     * @param time Route travel time in milliseconds
+     */
+    public RouteDTO(List<Point> points, double distance, long time) {
         this.points = points;
         this.distance = distance;
         this.time = time;
-        this.rating = rating;
     }
 
+    /**
+     * Route constructor with parameters
+     * @param points Points that make up the route as array
+     * @param distance Route distance in meters
+     * @param time Route travel time in milliseconds
+     */
     public RouteDTO(double[][] points, double distance, long time) {
         this.distance = distance;
         this.time = time;
         this.points = Arrays.stream(points).map(x -> new Point(x[0], x[1], this)).collect(Collectors.toList());
     }
 
+    /**
+     * Route constructor with parameters
+     * @param id id of this route
+     * @param points Points that make up the route as array
+     * @param distance Route distance in meters
+     * @param time Route travel time in milliseconds
+     */
     public RouteDTO(Long id, List<Point> points, double distance, long time) {
         this.id = id;
         this.points = points;
@@ -82,25 +124,17 @@ public class RouteDTO {
         this.time = time;
     }
 
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RouteDTO routeDTO = (RouteDTO) o;
-        return Double.compare(routeDTO.distance, distance) == 0 && time == routeDTO.time && rating == routeDTO.rating && Objects.equals(id, routeDTO.id) && Objects.equals(points, routeDTO.points);
+        return Double.compare(routeDTO.distance, distance) == 0 && time == routeDTO.time && Objects.equals(id, routeDTO.id) && Objects.equals(points, routeDTO.points);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, points, distance, time, rating);
+        return Objects.hash(id, points, distance, time);
     }
 
     @Override
@@ -112,7 +146,6 @@ public class RouteDTO {
                 ", points=" + stringBuilder.toString() +
                 ", distance=" + distance +
                 ", time=" + time +
-                ", rating=" + rating +
                 '}';
     }
 }

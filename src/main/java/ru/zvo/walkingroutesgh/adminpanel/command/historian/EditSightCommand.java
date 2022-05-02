@@ -25,7 +25,7 @@ public class EditSightCommand implements Command {
         System.out.println("EDIT_SIGHT_COMMAND");
         User user = (User) req.getSession().getAttribute("user");
         if (user.isBlocked()) {
-            resp.sendRedirect("/edit-sights");
+            new EditSightPageCommand().execute(req, resp);
             return;
         }
         SightsDAO sightsDAO = SpringContext.getBean(SightsDAO.class);

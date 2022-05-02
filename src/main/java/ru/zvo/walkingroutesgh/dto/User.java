@@ -1,19 +1,53 @@
 package ru.zvo.walkingroutesgh.dto;
 
+/**
+ * Describes user of this system
+ *
+ * @author Vladimir Zaitsev
+ */
 public class User {
 
+    /**
+     * User id in system
+     */
     private long id;
 
+    /**
+     * User login
+     */
     private String login;
 
+    /**
+     * User password
+     */
     private String password;
 
+    /**
+     * Role of this user
+     *
+     * @see Role
+     */
     private Role role;
 
+    /**
+     * Is user blocked in the system
+     */
     private boolean blocked;
 
+    /**
+     * Is user logged in
+     */
     private boolean online;
 
+    /**
+     * User constructor with parameters
+     *
+     * @param login User login
+     * @param password User password
+     * @param role User role
+     * @param blocked Is user blocked in the system
+     * @param online Is user logged in
+     */
     public User(String login, String password, Role role, boolean blocked, boolean online) {
         this.login = login;
         this.password = password;
@@ -22,6 +56,16 @@ public class User {
         this.online = online;
     }
 
+    /**
+     * User constructor with parameters
+     *
+     * @param id User id in system
+     * @param login User login
+     * @param password User password
+     * @param role User role
+     * @param blocked Is user blocked in the system
+     * @param online Is user logged in
+     */
     public User(long id, String login, String password, Role role, boolean blocked, boolean online) {
         this.id = id;
         this.login = login;

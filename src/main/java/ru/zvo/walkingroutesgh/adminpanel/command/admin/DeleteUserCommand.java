@@ -19,9 +19,9 @@ public class DeleteUserCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        System.out.println(userDAO.getUserById(Long.parseLong(req.getParameter("user_id"))));
         userDAO.deleteUser(Long.parseLong(req.getParameter("user_id")));
         req.getSession().setAttribute("users", userDAO.getAllUsers());
-//        resp.sendRedirect("/admin-main");
         new AdminMainPageCommand().execute(req, resp);
     }
 

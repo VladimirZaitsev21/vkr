@@ -7,19 +7,19 @@ import com.graphhopper.reader.postgis.GraphHopperPostgis;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.routing.util.FlagEncoder;
 import com.graphhopper.routing.util.FootFlagEncoder;
-import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import ru.zvo.walkingroutesgh.adminpanel.filters.*;
 import ru.zvo.walkingroutesgh.adminpanel.listeners.SessionListener;
 import ru.zvo.walkingroutesgh.adminpanel.servlets.FrontController;
-import ru.zvo.walkingroutesgh.encoders.Encoder;
-import ru.zvo.walkingroutesgh.hoppers.PostgisHopper;
+import ru.zvo.walkingroutesgh.encoders.EcoEncoder;
+import ru.zvo.walkingroutesgh.encoders.SightEncoder;
+import ru.zvo.walkingroutesgh.hoppers.EcoHopper;
+import ru.zvo.walkingroutesgh.hoppers.SightHopper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,6 +32,7 @@ public class BeanConfiguration {
 
     private FlagEncoder standardEncoder;
     private FlagEncoder sightsEncoder;
+    private FlagEncoder ecoEncoder;
 
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
@@ -99,7 +100,7 @@ public class BeanConfiguration {
         graphHopperConfig.putObject("db.tags_to_copy", "name");
 
         graphHopperConfig.putObject("datareader.file", "ways");
-        graphHopperConfig.putObject("graph.location", "target/classes/gh-results3/");
+        graphHopperConfig.putObject("graph.location", "src/main/resources/graphs/gh_standard/");
         graphHopperConfig.putObject("graph.flag_encoders", "foot");
 
         graphHopperConfig.setProfiles(Collections.singletonList(new Profile("my_foot").setVehicle("foot").setWeighting("fastest")));
@@ -116,8 +117,8 @@ public class BeanConfiguration {
 
     @Bean
     public GraphHopper sightsHopper() {
-        sightsEncoder = new Encoder();
-        GraphHopper graphHopper = new PostgisHopper().forServer();
+        sightsEncoder = new SightEncoder();
+        GraphHopper graphHopper = new SightHopper().forServer();
         GraphHopperConfig graphHopperConfig = new GraphHopperConfig();
         graphHopperConfig.putObject("db.host", "localhost");
         graphHopperConfig.putObject("db.port", "5432");
@@ -128,7 +129,7 @@ public class BeanConfiguration {
         graphHopperConfig.putObject("db.tags_to_copy", "name");
 
         graphHopperConfig.putObject("datareader.file", "ways");
-        graphHopperConfig.putObject("graph.location", "target/classes/gh-results2/");
+        graphHopperConfig.putObject("graph.location", "src/main/resources/graphs/gh_sight/");
         graphHopperConfig.putObject("graph.flag_encoders", "foot");
 
         graphHopperConfig.setProfiles(Collections.singletonList(new Profile("my_foot").setVehicle("foot").setWeighting("fastest")));
@@ -141,6 +142,35 @@ public class BeanConfiguration {
     @Bean
     public FlagEncoder sightsEncoder() {
         return sightsEncoder;
+    }
+
+    @Bean
+    public GraphHopper ecoHopper() {
+        ecoEncoder = new EcoEncoder();
+        GraphHopper graphHopper = new EcoHopper().forServer();
+        GraphHopperConfig graphHopperConfig = new GraphHopperConfig();
+        graphHopperConfig.putObject("db.host", "localhost");
+        graphHopperConfig.putObject("db.port", "5432");
+        graphHopperConfig.putObject("db.database", "osm_db_custom_ryazan_2");
+        graphHopperConfig.putObject("db.schema", "public");
+        graphHopperConfig.putObject("db.user", "postgres");
+        graphHopperConfig.putObject("db.passwd", "password");
+        graphHopperConfig.putObject("db.tags_to_copy", "name");
+
+        graphHopperConfig.putObject("datareader.file", "ways");
+        graphHopperConfig.putObject("graph.location", "src/main/resources/graphs/gh_eco/");
+        graphHopperConfig.putObject("graph.flag_encoders", "foot");
+
+        graphHopperConfig.setProfiles(Collections.singletonList(new Profile("my_foot").setVehicle("foot").setWeighting("fastest")));
+
+        graphHopper.init(graphHopperConfig);
+        graphHopper.setEncodingManager(EncodingManager.start().add(ecoEncoder).build());
+        return graphHopper.importOrLoad();
+    }
+
+    @Bean
+    public FlagEncoder ecoEncoder() {
+        return ecoEncoder;
     }
 
 }

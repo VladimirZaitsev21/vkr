@@ -1,330 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
-      xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
-  <title>Leaflet sample</title>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<!--  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>-->
-  <link rel="stylesheet" href="../../../../../../AppData/Roaming/JetBrains/IntelliJIdea2021.1/javascript/extLibs/http_cdn.leafletjs.com_leaflet-0.7.3_leaflet.css">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<!--  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>-->
-  <script src="../../../../../../AppData/Roaming/JetBrains/IntelliJIdea2021.1/javascript/extLibs/http_cdn.leafletjs.com_leaflet-0.7.3_leaflet.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-  <link rel="stylesheet"
-        href="../../../../../../AppData/Roaming/JetBrains/IntelliJIdea2021.1/javascript/extLibs/http_www.w3schools.com_w3css_4_w3.css">
+    <title>Walking routes</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!--    <link rel="stylesheet"-->
+<!--          href="../../../../../../AppData/Roaming/JetBrains/IntelliJIdea2021.1/javascript/extLibs/http_www.w3schools.com_w3css_4_w3.css">-->
+    <link rel="stylesheet" href="static/http_www.w3schools.com_w3css_4_w3.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
+
+    <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />
+    <style>
+        .controlRoute {
+            background-color: #fff;
+            border: 1px solid gray;
+            border-radius: 0 0 0 10px;
+            padding: 20px 10px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 300px;
+        }
+
+        .controlRoute input {
+            width: 100%;
+        }
+
+        .controlRoute #finishAddress, .controlRoute #clear, .controlRoute #totalInfo {
+            margin-top: 10px;
+        }
+
+        .buildButton {
+            margin-left: 10%;
+            margin-top: 10%;
+            width: 80%;
+            height: 50px;
+            border: solid blue;
+            background-color: blue;
+            color: white;
+            border-radius: 5px;
+            transition-duration: 0.4s;
+        }
+
+        .buildButton:hover {
+            background-color: #DCDCDC;
+            color: black;
+        }
+    </style>
+    <link rel="stylesheet" href="../../webapp/static/http_www.w3schools.com_w3css_4_w3.css">
 </head>
-
-<style type="text/css">
-  .buildButton {
-    margin-left: 10%;
-    margin-top: 10%;
-    width: 80%;
-    height: 50px;
-    border: solid blue;
-    background-color: blue;
-    color: white;
-    border-radius: 5px;
-    transition-duration: 0.4s;
-  }
-
-  .buildButton:hover {
-    background-color: #DCDCDC;
-    color: black;
-  }
-</style>
 <body>
-
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
+<script src="https://unpkg.com/ol-popup@4.0.0"></script>
 <!--Сайдбар-->
 <div class="w3-sidebar w3-light-grey w3-bar-block" style="width:25%; border: 1px solid gray;">
-  <h5 class="w3-bar-item">Настройки маршрута</h5>
-  <label for="fromInput" class="w3-bar-item w3-text">Откуда:</label>
-  <input id="fromInput" class="w3-bar-item w3-input" style="width: 80%; margin-left: 10%"/>
-  <label for="toInput" class="w3-bar-item w3-text">Куда:</label>
-  <input id="toInput" class="w3-bar-item w3-input" style="width: 80%; margin-left: 10%"/>
-  <label class="w3-bar-item w3-text">Тип маршрута:</label>
-  <div id="typesRadios" onclick="showSightScale()">
-    <p><input name="routeType" type="radio" value="standard" checked style="margin-left: 10%"/> Кратчайший</p>
-    <p><input name="routeType" type="radio" value="sights" style="margin-left: 10%" /> Наиболее интересный</p>
-    <p><input name="routeType" type="radio" value="eco" style="margin-left: 10%" /> Наиболее экологичный</p>
-  </div>
-  <label id="sightScaleLabel" for="interest" class="w3-bar-item w3-text" style="display: none">Интересность:</label>
-  <input id="interest" type="range" min="0" max="2" value="2" step="any" style="margin-left: 10%; width: 80%; display: none">
-  <button id="buildRoute" type="submit" class="buildButton" onclick="getRoute()">Идем!</button>
-  <button id="showSights" type="submit" class="buildButton" onclick="showSights()">Показать достопримечательности</button>
-  <a href="/frontController?command=login_page">Войти</a>
+    <h5 class="w3-bar-item">Настройки маршрута</h5>
+    <label for="fromInput" class="w3-bar-item w3-text">Откуда:</label>
+    <input id="fromInput" class="w3-bar-item w3-input" style="width: 80%; margin-left: 10%; font-size: x-small"/>
+    <label for="toInput" class="w3-bar-item w3-text">Куда:</label>
+    <input id="toInput" class="w3-bar-item w3-input" style="width: 80%; margin-left: 10%; font-size: x-small"/>
+    <a id="markOnMap">Отметить на карте</a>
+    <label class="w3-bar-item w3-text">Тип маршрута:</label>
+    <div id="typesRadios" onclick="showSightScale()">
+        <p><input name="routeType" type="radio" value="standard" checked style="margin-left: 10%"/> Кратчайший</p>
+        <p><input name="routeType" type="radio" value="sights" style="margin-left: 10%"/> Наиболее интересный</p>
+        <p><input name="routeType" type="radio" value="eco" style="margin-left: 10%"/> Наиболее экологичный</p>
+    </div>
+    <label id="sightScaleLabel" for="interest" class="w3-bar-item w3-text" style="display: none">Интересность:</label>
+    <input id="interest" type="range" min="0" max="2" value="2" step="any" style="margin-left: 10%; width: 80%; display: none">
+    <button id="buildRoute" type="submit" class="buildButton">Идем!</button>
+    <button id="showSights" type="submit" class="buildButton">Показать достопримечательности</button>
+    <a href="/frontController?command=login_page">Войти</a>
 </div>
-
-<!--Карта-->
+<!--<div id="map" style="width: 100%; height: 400px;"></div>-->
 <div id="mapDiv" style="margin-left: 25%; display: block; width: 80%">
-  <div id="map" style="width: 100%; height: 100%; display: flex; position: absolute"></div>
+    <div id="map" style="width: 100%; height: 100%; display: flex; position: absolute"></div>
 </div>
-
-
 <div id="second-bar" class="w3-sidebar w3-light-grey w3-bar-block" style="width: 0; margin-left: 80%;">
-  <label id="length" class="w3-bar-item w3-text"></label>
-  <label id="time" class="w3-bar-item w3-text"></label>
+    <label id="length" class="w3-bar-item w3-text"></label>
+    <label id="time" class="w3-bar-item w3-text"></label>
+    <button id="clear" type="submit" class="buildButton">Сбросить маршрут</button>
 </div>
-
-<script>
-
-  function showSights() {
-    $.get(
-            'http://localhost:8080/sights',
-            function (data) {
-              if (data) {
-                for (let i = 0; i < data.length; i++) {
-                  console.log(data[i].osmType);
-                  console.log(data[i].osmType == 'N');
-                  console.log(data[i].points[0]);
-                  if (data[i].osmType == 'N') {
-                    var circleOptions = {
-                      color: 'green',
-                      fillColor: '#0f0',
-                      fillOpacity: 0.5
-                    };
-                    var circle = new L.circle(data[i].points[0], 10, circleOptions)
-                    circle.bindPopup(data[i].name);
-                    map.addLayer(circle);
-                  } else {
-                    var polygon = new L.polygon(data[i].points, {color: 'green'});
-                    polygon.bindPopup(data[i].name);
-                    map.addLayer(polygon);
-                  }
-                }
-              }
-            }
-    )
-  }
-
-  function showSightScale() {
-    let sightScaleLabel = document.getElementById("sightScaleLabel");
-    let sightScale = document.getElementById("interest");
-    let sightsRadios = document.getElementsByName("routeType");
-    // alert(string);
-    if (sightsRadios[0].checked) {
-      sightScaleLabel.style.display = "none";
-      sightScale.style.display = "none";
-    } else {
-      if (sightsRadios[1].checked) {
-        sightScaleLabel.innerText = "Интересность";
-        sightScaleLabel.style.display = "block";
-        sightScale.style.display = "block";
-      } else {
-        sightScaleLabel.innerText = "Экологичность";
-        sightScaleLabel.style.display = "block";
-        sightScale.style.display = "block";
-      }
-    }
-
-  }
-  // Creating map options
-  var mapOptions = {
-    center: [54.630183, 39.707637],
-    //center: [44.923001, 34.135895],
-    zoom: 10
-  }
-
-  // Creating a map object
-  var map = new L.map('map', mapOptions);
-
-  // Creating a Layer object
-  var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-
-  // Adding layer to the map
-  map.addLayer(layer);
-  var loc1;
-  var loc2;
-  var greenIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
-
-</script>
-
-<script>
-  map.on('click', function (e) {
-    onMapClick(e);
-  });
-
-  function onMapClick(e) {
-    if (loc1 == null) {
-      loc1 = new L.marker(e.latlng, {draggable: 'true', title: 'Начало маршрута'});
-      loc1.on('dragend', function (event) {
-        //removePolyline();
-        //getRoute();
-        //отправляем запрос маршрута
-      });
-      document.getElementById("fromInput").value = "" + loc1.getLatLng().lat + ";" + loc1.getLatLng().lng
-      map.addLayer(loc1);
-    } else if (loc2 == null) {
-      loc2 = new L.marker(e.latlng, {draggable: 'true', title: 'Конец маршрута', icon: greenIcon});
-      loc2.on('dragend', function (event) {
-        // removePolyline();
-        // getSightsRoute();
-        //отправляем запрос марурута
-      });
-      document.getElementById("toInput").value = "" + loc2.getLatLng().lat + ";" + loc2.getLatLng().lng
-      map.addLayer(loc2);
-    }
-  }
-</script>
-
-<script>
-  var polyline;
-  var newPolyline;
-  var routeDTO;
-  function getSightsRoute() {
-    console.log('getRoute');
-    if (loc2 != null && loc1 != null) {
-      console.log("getRoute IF");
-      var p1 = loc1.getLatLng();
-      var p2 = loc2.getLatLng();
-      var eco = document.getElementById('interest').value;
-      console.log("eco: " + eco);
-      console.log("getRoute before GET")
-      $.get(
-              'http://localhost:8080/sights_path_dto',
-              {
-                fromLat: p1.lat,
-                fromLng: p1.lng,
-                toLat: p2.lat,
-                toLng: p2.lng,
-                ratio: eco
-              },
-              function (data) {
-                console.log(data);
-                if (data) {
-                  routeDTO = data;
-                  if (polyline) {
-                    map.removeLayer(polyline);
-                  }
-                  polyline = new L.polyline(data.pointsAsArray, {color: 'red'});
-                  map.addLayer(polyline);
-                  map.fitBounds(polyline.getBounds());
-                  var distanceHours = Math.trunc(data.time / 1000 / 3600);
-                  var distanceMinutes;
-                  var distanceSeconds = data.time/1000;
-                  if (distanceHours === 0) {
-                    distanceMinutes = Math.trunc(data.time / 1000 / 60);
-                  } else {
-                    distanceMinutes = (data.time / 1000 - distanceHours * 3600) / 60;
-                  }
-
-                  //Двигаем карту вправо
-                  // document.getElementById("mapDiv").style.marginLeft = '45%';
-                  // document.getElementById("mapDiv").style.display = 'block';
-
-                  //делаем видимым сайдбар с результатами построения
-                  document.getElementById("length").innerText = 'Расстояние: ' + (data.distance/1000).toFixed(3) + ' км';
-                  document.getElementById("time").innerText = 'Время в пути: ' + distanceHours + ' ч, ' + Math.round(distanceMinutes) + ' мин';
-                  document.getElementById("second-bar").style.width = '20%';
-                  document.getElementById("second-bar").style.border = '1 px solid grey';
-                  // alert('distance (m): ' + (data.distance).toFixed(2) + '\ndistance (km): ' + (data.distance/1000).toFixed(3) + '\ntime (s): ' + distanceSeconds.toFixed(2) + '\ntime (hh:mm): ' + distanceHours + ':' + Math.round(distanceMinutes));
-                }
-              }
-      );
-    }
-  }
-
-  function getStandardRoute() {
-    if (loc2 != null && loc1 != null) {
-      console.log("getRoute IF");
-      var p1 = loc1.getLatLng();
-      var p2 = loc2.getLatLng();
-     // var eco = document.getElementById('eco_param').value;
-     // console.log("eco: " + eco);
-      console.log("getRoute before GET")
-      $.get(
-              'http://localhost:8080/standard_path_dto',
-              {
-                fromLat: p1.lat,
-                fromLng: p1.lng,
-                toLat: p2.lat,
-                toLng: p2.lng,
-                //ratio: eco
-              },
-              function (data) {
-                console.log(data);
-                if (data) {
-                  routeDTO = data;
-                  if (polyline) {
-                    map.removeLayer(polyline);
-                  }
-                  polyline = new L.polyline(data.pointsAsArray, {color: 'red'});
-                  map.addLayer(polyline);
-                  map.fitBounds(polyline.getBounds());
-                  var distanceHours = Math.trunc(data.time / 1000 / 3600);
-                  var distanceMinutes;
-                  var distanceSeconds = data.time/1000;
-                  if (distanceHours === 0) {
-                    distanceMinutes = Math.trunc(data.time / 1000 / 60);
-                  } else {
-                    distanceMinutes = (data.time / 1000 - distanceHours * 3600) / 60;
-                  }
-                  //Двигаем карту вправо
-                  // document.getElementById("mapDiv").style.marginLeft = '45%';
-                  // document.getElementById("mapDiv").style.display = 'block';
-
-                  //делаем видимым сайдбар с результатами построения
-                  document.getElementById("length").innerText = 'Расстояние: ' + (data.distance/1000).toFixed(3) + ' км';
-                  document.getElementById("time").innerText = 'Время в пути: ' + distanceHours + ' ч, ' + Math.round(distanceMinutes) + ' мин';
-                  document.getElementById("second-bar").style.width = '20%';
-                  // document.getElementById("second-bar").style.marginLeft = '25%';
-                  document.getElementById("second-bar").style.border = '1 px solid grey';
-                  // alert('distance (m): ' + (data.distance).toFixed(2) + '\ndistance (km): ' + (data.distance/1000).toFixed(3) + '\ntime (s): ' + distanceSeconds.toFixed(2) + '\ntime (hh:mm): ' + distanceHours + ':' + Math.round(distanceMinutes));
-                }
-              }
-      );
-    }
-  }
-
-  function getAnotherRoute() {
-
-    $.ajax({
-      url: 'http://localhost:8080/another',
-      type: 'POST',
-      data: JSON.stringify(routeDTO),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      async: false,
-      success: function (data) {
-        if (data) {
-          newPolyline = new L.polyline(data.pointsAsArray, {color: 'green'});
-          map.addLayer(newPolyline);
-          map.fitBounds(newPolyline.getBounds());
-        }
-      }
-    });
-  }
-
-  function getRoute() {
-    if (document.getElementsByName("routeType")[0].checked) {
-      getStandardRoute();
-    } else {
-      if (document.getElementsByName("routeType")[1].checked) {
-        getSightsRoute();
-      }
-    }
-  }
-
-  function removeRoute() {
-    map.removeLayer(loc1);
-    map.removeLayer(loc2);
-    loc1 = null;
-    loc2 = null;
-    map.removeLayer(polyline);
-    map.removeLayer(newPolyline);
-  }
-
-  function removePolyline() {
-    map.removeLayer(polyline);
-    map.removeLayer(newPolyline);
-  }
-</script>
+<div id="routeControl" class="controlRoute">
+    <input type="search" id="startAddress" placeholder = "Введите адрес или укажите точку на карте"></input>
+    <input type="search" id="finishAddress" placeholder = "Введите адрес или укажите точку на карте"></input>
+    <div id="totalInfo" style="display: none;"></div>
+    <input type="button" id="clear1" value="Очистить"></input>
+</div>
+<script src="map_work.js"></script>
 </body>
-
 </html>

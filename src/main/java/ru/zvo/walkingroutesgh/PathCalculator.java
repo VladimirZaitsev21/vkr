@@ -19,14 +19,18 @@ public class PathCalculator {
     public static final int EARTH_RADIUS = 6_378_137;
     private GraphHopper sightsHopper;
     private GraphHopper standardHopper;
+    private GraphHopper ecoHopper;
     private FlagEncoder sightsEncoder;
     private FlagEncoder standardEncoder;
+    private FlagEncoder ecoEncoder;
 
-    public PathCalculator(GraphHopper sightsHopper, GraphHopper standardHopper, FlagEncoder sightsEncoder, FlagEncoder standardEncoder) {
+    public PathCalculator(GraphHopper sightsHopper, GraphHopper standardHopper, GraphHopper ecoHopper, FlagEncoder sightsEncoder, FlagEncoder standardEncoder, FlagEncoder ecoEncoder) {
         this.sightsHopper = sightsHopper;
         this.standardHopper = standardHopper;
+        this.ecoHopper = ecoHopper;
         this.sightsEncoder = sightsEncoder;
         this.standardEncoder = standardEncoder;
+        this.ecoEncoder = ecoEncoder;
     }
 
     public RouteDTO getSightsPath(double fromLat, double fromLng, double toLat, double toLng, double ecoFactor) {
@@ -77,6 +81,29 @@ public class PathCalculator {
         return routeDTO;
     }
 
+    public RouteDTO getEcoPath(double fromLat, double fromLng, double toLat, double toLng, double ecoFactor) {
+        RequestParams.getInstance().setEcoFactor(ecoFactor);
+        GHRequest request = new GHRequest(fromLat, fromLng, toLat, toLng)
+                .setAlgorithm(
+                        new AlgorithmOptions(
+                                Parameters.Algorithms.ASTAR.toString(),
+                                new FastestWeighting(
+                                        ecoEncoder
+                                )
+                        ).getAlgorithm()
+                )
+                .setProfile("my_foot");
+        GHResponse response = ecoHopper.route(request);
+        ResponsePath responsePath = response.getBest();
+        int pointListSize = responsePath.getPoints().getSize();
+        double[][] points = new double[pointListSize][2];
+        for (int i = 0; i < pointListSize; i++) {
+            points[i][0] = responsePath.getPoints().getLat(i);
+            points[i][1] = responsePath.getPoints().getLon(i);
+        }
+        RouteDTO routeDTO = new RouteDTO(points, responsePath.getDistance(), responsePath.getTime());
+        return routeDTO;
+    }
 
     /**
      * Calculates shortest distance between two routes using haversine formula.
