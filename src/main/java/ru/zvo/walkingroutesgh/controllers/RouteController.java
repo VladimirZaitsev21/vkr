@@ -43,32 +43,6 @@ public class RouteController {
                                @RequestParam(name = "toLat") double toLatitude,
                                @RequestParam(name = "toLng") double toLongitude,
                                @RequestParam(name = "ratio") double ratio) {
-//        List<EcoPlace> ecoPlaces = ecoPlacesDAO.getAllEcoPlaces();
-//        for (EcoPlace ecoPlace: ecoPlaces) {
-//            String leisure = ecoPlace.getTags().get("leisure");
-//            if (leisure != null) {
-//                if (leisure.equals("park")) {
-//                    ecoPlace.setImpact(50);
-//                }
-//                if (leisure.equals("garden")) {
-//                    ecoPlace.setImpact(40);
-//                }
-//                if (leisure.equals("nature_reserve")) {
-//                    ecoPlace.setImpact(30);
-//                }
-//            }
-//            String amenity = ecoPlace.getTags().get("amenity");
-//            if (amenity != null) {
-//                if (amenity.equals("industrial")) {
-//                    ecoPlace.setImpact(-20);
-//                }
-//                if (amenity.equals("fuel")) {
-//                    ecoPlace.setImpact(-10);
-//                }
-//            }
-//        }
-//        ecoPlaces.forEach(System.out::println);
-//        ecoPlaces.forEach(ecoPlacesDAO::save);
         return pathCalculator.getEcoPath(fromLatitude, fromLongitude, toLatitude, toLongitude, ratio);
     }
 
@@ -84,7 +58,7 @@ public class RouteController {
     @GetMapping("/sights")
     @ResponseBody
     public List<Sight> getSights() {
-        System.out.println("SIGHTS REQ");
-        return sightsDAO.getAllSights();
+        List<Sight> allSights = sightsDAO.getAllSights();
+        return allSights;
     }
 }

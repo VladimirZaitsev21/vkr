@@ -65,8 +65,10 @@ RouteControl.prototype._init = function () {
     this._clearButton.addEventListener('click', this._clear.bind(this, 1), false);
     this._clearButton.addEventListener('touchstart', this._clear.bind(this, 1), false);
 
-    this._buildRouteButton.addEventListener('click', this._buildRoute.bind(this), false);
-    this._showSightsButton.addEventListener('click', this._showSights.bind(this), false);
+    this._buildRouteButton.addEventListener('click', this._buildRoute.bind(this, 1), false);
+    this._buildRouteButton.addEventListener('touchstart', this._buildRoute.bind(this, 1), false);
+    this._showSightsButton.addEventListener('click', this._showSights.bind(this, 1), false);
+    this._showSightsButton.addEventListener('touchstart', this._showSights.bind(this, 1), false);
 
     this._markOnMap.addEventListener('click', this._markNow.bind(this), false);
     // подписываемся на событие клика на карте для установки маркеров

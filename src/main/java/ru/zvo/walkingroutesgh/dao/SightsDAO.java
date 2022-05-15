@@ -64,7 +64,7 @@ public class SightsDAO {
                         r.getDouble(6)));
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return sights;
     }
