@@ -89,7 +89,7 @@ public class PathCalculator {
                 );
             }
         }
-        return Arrays.stream(distances).flatMapToDouble(Arrays::stream).min().getAsDouble();
+        return Arrays.stream(distances).flatMapToDouble(Arrays::stream).min().orElse(-1);
     }
 
     /**

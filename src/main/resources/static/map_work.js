@@ -201,7 +201,7 @@ RouteControl.prototype._buildRoute = function () {
         var startWgs = ol.proj.transform(startCoords, 'EPSG:3857', 'EPSG:4326');
         var finishWgs = ol.proj.transform(finishCoords, 'EPSG:3857', 'EPSG:4326');
 
-        var routeUrl = 'http://192.168.0.5:8080/';
+        var routeUrl = 'http://192.168.0.6:8080/';
         var urlParams = 'fromLat=' + startWgs[1] + '&fromLng=' + startWgs[0] + '&toLat=' + finishWgs[1] + '&toLng=' + finishWgs[0];
         if (document.getElementsByName("routeType")[0].checked) {
             routeUrl += 'standard_path_dto?' + urlParams;
@@ -261,7 +261,7 @@ RouteControl.prototype._processClick = function (evt) {
 RouteControl.prototype._showSights = function (evt) {
     var self = this;
     var request = new XMLHttpRequest();
-    request.open("GET", 'http://192.168.0.5:8080/sights');
+    request.open("GET", 'http://192.168.0.6:8080/sights');
     request.onreadystatechange = function () {
         if (request.readyState == 4) {
             var data = JSON.parse(request.responseText);
